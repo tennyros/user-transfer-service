@@ -5,11 +5,13 @@ WORKDIR /build
 WORKDIR /build/user-transfer-service
 COPY /pom.xml /build/user-transfer-service
 COPY /src /build/user-transfer-service/src
+COPY /.env /build/user-transfer-service/
 RUN mvn -B -f pom.xml clean package -DskipTests -Dspring.profiles.active=dev
 
 FROM eclipse-temurin:17-jre-alpine
 
 COPY --from=build /build/user-transfer-service/target/*.jar app.jar
+COPY --from=build /build/user-transfer-service/.env ./
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
